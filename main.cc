@@ -1,90 +1,86 @@
-#include <iostream>
-#include <math.h>
-#include <vector>
 #include <array>
+#include <cmath>
+#include <iostream>
+#include <vector>
 
 int main() {
 
-	// Initializing the variables
-	float height, width;
-	float element_height, element_width;
-	int num_vertical_elements, num_horizontal_elements;
-	int num_nodes;
-	int node;
-	int choice;
-	std::cout << "Point generator" << std::endl;
-	std::cout << "This program generates points within a given rectangle" << std::endl;
-	std::cout << "according to a given mesh." << std::endl << std::endl;
+	// Initialize the variables
+	double vertical_spacing, horizontal_spacing;
+	int num_vertical_points, num_horizontal_points;
+	int num_points;
+	
+	std::cout << "Point generator\n";
+	std::cout << "This program generates points within a given rectangle \n";
+	std::cout << "according to a given mesh.\n\n";
 
-	// Prompting the user for the type of meshing he wants to do
-	std::cout << "What type of meshing do you want to do\? " << std::endl;
-	std::cout << "1) set a maximum size for each element. " << std::endl;
-	std::cout << "2) set the number of elements in each direction. " << std::endl;
+	// Prompt the user for the type of point generation he wants to do
+	std::cout << "What type of point generation do you want to do? \n";
+	std::cout << "1) set a maximum size for the spacing between points.\n";
+	std::cout << "2) set the number of points in each direction.\n";
 	std::cout << "Choice: ";
+	int choice;	
 	std::cin >> choice;
 
-	// Asking the user for the size of the rectangle
-	std::cout << "What are the dimensions of your rectangle\?" << std::endl;
+	// Ask the user for the size of the rectangle
+	double height, width;	
+	std::cout << "What are the dimensions of your rectangle?\n";
 	std::cout << "width: ";
 	std::cin >> width;
 	std::cout << "height: ";
 	std::cin >> height;
 
-	// Checking mesh type choice
-	if (choice == 1)
-	{
-		// Prompting the user forrr the maximum size o elements
-		std::cout << "What are the maximum dimensions of each element/?" <<  std::endl;
-		std::cout << "width of element: ";
-		std::cin  >> element_width;
-		std::cout << "height of element: ";
-		std::cin >> element_height;
+	// Check mesh type choice
+	if (choice == 1) {
+		// Prompt the user for the maximum spacing between adjacent points
+		std::cout << "What is the maximum spacing between points?\n";
+		std::cout << "Horizontal spacing: ";
+		std::cin  >> horizontal_spacing;
+		std::cout << "vertical spacing: ";
+		std::cin >> vertical_spacing;
 
-		// Creating the list of nodes (or points)
-		num_vertical_elements = std::ceil(height/element_height);
-		num_horizontal_elements = std::ceil(width/element_width);				
-	} else 
-	{	
-		// Prompt the user for the number of elements in each direction
-		std::cout << "How many elements in the horizontal direction\?";
-		std::cin >> num_horizontal_elements;
-		std::cout << "How many elements in the vertical direction\?";
-		std::cin >> num_vertical_elements;
+		// Create the list of points
+		num_vertical_points = 1 + std::ceil(height/vertical_spacing);
+		num_horizontal_points = 1 + std::ceil(width/horizontal_spacing);				
+	} else {	
+		// Prompt the user for the number of points in each direction
+		std::cout << "How many points in the horizontal direction? ";
+		std::cin >> num_horizontal_points;
+		std::cout << "How many points in the vertical direction? ";
+		std::cin >> num_vertical_points;
 	}
 
-	// Update the size oooff each element
-	element_width = width/num_horizontal_elements;
-	element_height = height/num_vertical_elements;
+	// Update the size of each horizontal or vertical spacing
+	horizontal_spacing = width/(num_horizontal_points - 1);
+	vertical_spacing = height/(num_vertical_points - 1);
 
-	// Creating the list of nodes (or points)
-	num_nodes = (num_vertical_elements + 1)*(num_horizontal_elements + 1);
-	std::vector<std::array<float,2>> list_of_nodes;
+	// Create the list of points
+	num_points = num_vertical_points * num_horizontal_points;
+	std::vector<std::array<double,2>> list_of_points;
 
-	// Printing mesh details
-	std::cout << "total number of points/nodes: " << num_nodes << std::endl;
-	std::cout << "total number of vertical elements: " << num_vertical_elements << std::endl;
-	std::cout << "total number of horizontal elements: " << num_horizontal_elements << std::endl;
+	// Print mesh details
+	std::cout << "total number of points: " << num_points << std::endl;
+	std::cout << "total number of vertical points: " << num_vertical_points << std::endl;
+	std::cout << "total number of horizontal points: " << num_horizontal_points << std::endl;
 
-	// Generating points by using a loop along the vertical and horizontal
-	// directions of  the rectangle
-	node = 0;
-	for (int i=0;i<=num_vertical_elements;i++)
-	{
-		for (int j=0;j<=num_horizontal_elements;j++)
-		{			
-			list_of_nodes.push_back({j*element_width,i*element_height});
-			if (j==num_horizontal_elements)
-				list_of_nodes[node][0] = width;
-			if (i==num_vertical_elements)
-				list_of_nodes[node][1] = height;
-			node++;
+	int point = 0; // variable that indicates the point number in the list
+		       // of points and increases as each point is created.
+
+	// Loop over all the vertical ('i' represents each column) and horizontal ('j'
+	// represents each row) points.
+	for (int i=0;i<num_vertical_points;++i) {
+		for (int j=0;j<num_horizontal_points;++j) {
+			// Create a point at the (i+1)-th column and (j+1)-th row of 
+			// points. This point is assigned a vertical and horizontal coordinate.
+			list_of_points.push_back({j*horizontal_spacing,i*vertical_spacing});
+			++point;
 		}
 	}
 
-	// Printing the (x,y) values of each node/point
-	node = 0;
-	for (;node<num_nodes;node++)
-	{
-		std::cout << "Point #" << node+1 << " (" << list_of_nodes[node][0] << "," << list_of_nodes[node][1] << ")" << std::endl;
+	// Print the (x,y) values of each point
+	int i=1; // helps counting the points to be printed	
+	for (auto chosen_point:list_of_points) {
+		std::cout << "Point #" << i << " (" << chosen_point[0] << "," << chosen_point[1] << ")\n";
+		++i;
 	}
 }
