@@ -1,15 +1,11 @@
-#include <array>
 #include <cmath>
+#include <array>
 #include <iostream>
 #include <vector>
 
 int main() {
 
-	// Initialize the variables
-	double vertical_spacing, horizontal_spacing;
-	int num_vertical_points, num_horizontal_points;
-	int num_points;
-	
+	// Introduce user to the point-generator
 	std::cout << "Point generator\n";
 	std::cout << "This program generates points within a given rectangle \n";
 	std::cout << "according to a given mesh.\n\n";
@@ -30,57 +26,63 @@ int main() {
 	std::cout << "height: ";
 	std::cin >> height;
 
+	// Initialize spacing and number of points in each direction
+	double vertical_spacing, horizontal_spacing;
+	unsigned int nvertical_points, nhorizontal_points;
+	
 	// Check mesh type choice
 	if (choice == 1) {
 		// Prompt the user for the maximum spacing between adjacent points
 		std::cout << "What is the maximum spacing between points?\n";
 		std::cout << "Horizontal spacing: ";
 		std::cin  >> horizontal_spacing;
-		std::cout << "vertical spacing: ";
+		std::cout << "Vertical spacing: ";
 		std::cin >> vertical_spacing;
 
-		// Create the list of points
-		num_vertical_points = 1 + std::ceil(height/vertical_spacing);
-		num_horizontal_points = 1 + std::ceil(width/horizontal_spacing);				
+		// Determine the number of points in each direction
+		nvertical_points = 1 + std::ceil(height/vertical_spacing);
+		nhorizontal_points = 1 + std::ceil(width/horizontal_spacing);				
 	} else {	
 		// Prompt the user for the number of points in each direction
 		std::cout << "How many points in the horizontal direction? ";
-		std::cin >> num_horizontal_points;
+		std::cin >> nhorizontal_points;
 		std::cout << "How many points in the vertical direction? ";
-		std::cin >> num_vertical_points;
+		std::cin >> nvertical_points;
 	}
 
 	// Update the size of each horizontal or vertical spacing
-	horizontal_spacing = width/(num_horizontal_points - 1);
-	vertical_spacing = height/(num_vertical_points - 1);
+	horizontal_spacing = width/(nhorizontal_points - 1);
+	vertical_spacing = height/(nvertical_points - 1);
 
-	// Create the list of points
-	num_points = num_vertical_points * num_horizontal_points;
-	std::vector<std::array<double,2>> list_of_points;
+	// Initialize the variables with the total number of points
+	const int npoints = nvertical_points * nhorizontal_points;
+	
+	// Create a list of all the points
+	std::vector<std::array<double,2>> points;
 
 	// Print mesh details
-	std::cout << "total number of points: " << num_points << std::endl;
-	std::cout << "total number of vertical points: " << num_vertical_points << std::endl;
-	std::cout << "total number of horizontal points: " << num_horizontal_points << std::endl;
+	std::cout << "total number of points: " << npoints << std::endl;
+	std::cout << "total number of vertical points: " << nvertical_points << std::endl;
+	std::cout << "total number of horizontal points: " << nhorizontal_points << std::endl;
 
-	int point = 0; // variable that indicates the point number in the list
-		       // of points and increases as each point is created.
 
+	// Declare an auxiliary point
+	std::array<double,2> aux_point;
+	  
 	// Loop over all the vertical ('i' represents each column) and horizontal ('j'
-	// represents each row) points.
-	for (int i=0;i<num_vertical_points;++i) {
-		for (int j=0;j<num_horizontal_points;++j) {
-			// Create a point at the (i+1)-th column and (j+1)-th row of 
-			// points. This point is assigned a vertical and horizontal coordinate.
-			list_of_points.push_back({j*horizontal_spacing,i*vertical_spacing});
-			++point;
-		}
-	}
+	// represents each row) points and add each of them to the list of points by
+	// assigning their position.
+	for (int i=0;i<nvertical_points;++i)
+	  for (int j=0;j<nhorizontal_points;++j){
+	    aux_point.at(0) = j*horizontal_spacing;
+	    aux_point.at(1) = i*vertical_spacing;
+		  points.emplace_back(aux_point);
+	  }
 
 	// Print the (x,y) values of each point
 	int i=1; // helps counting the points to be printed	
-	for (auto chosen_point:list_of_points) {
-		std::cout << "Point #" << i << " (" << chosen_point[0] << "," << chosen_point[1] << ")\n";
+	for (auto& point:points) {
+	  std::cout << "Point #" << i << " (" << point.at(0) << "," << point.at(1) << ")\n";
 		++i;
 	}
 }
