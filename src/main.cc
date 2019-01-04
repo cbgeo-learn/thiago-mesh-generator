@@ -6,56 +6,20 @@
 
 int main() {
 
-  // Introduce user to the point-generator
-  std::cout << "Point generator\n";
-  std::cout << "This program generates points within a given rectangle \n";
-  std::cout << "according to a given mesh.\n\n";
-
-  // Prompt the user for the type of point generation he wants to do
-  std::cout << "What type of point generation do you want to do? \n";
-  std::cout << "1) set a maximum size for the spacing between points.\n";
-  std::cout << "2) set the number of points in each direction.\n";
-  std::cout << "Choice: ";
-  int choice;
-  std::cin >> choice;
-
-  // Ask the user for the size of the rectangle
-  double height, width;
-  std::cout << "What are the dimensions of your rectangle?\n";
-  std::cout << "width: ";
-  std::cin >> width;
-  std::cout << "height: ";
-  std::cin >> height;
+  // Initialize Domain (rectangle) dimensions
+  const double height = 5;
+  const double width = 5;
 
   // Initialize spacing and number of points in each direction
-  double vertical_spacing, horizontal_spacing;
+  const double vertical_spacing = 1;
+  const double horizontal_spacing = 1;
   unsigned nvertical_points, nhorizontal_points;
 
-  // Check mesh type choice
-  if (choice == 1) {
-    // Prompt the user for the maximum spacing between adjacent points
-    std::cout << "What is the maximum spacing between points?\n";
-    std::cout << "Horizontal spacing: ";
-    std::cin >> horizontal_spacing;
-    std::cout << "Vertical spacing: ";
-    std::cin >> vertical_spacing;
+  // Determine the number of points in each direction
+  nvertical_points = 1 + std::ceil(height / vertical_spacing);
+  nhorizontal_points = 1 + std::ceil(width / horizontal_spacing);
 
-    // Determine the number of points in each direction
-    nvertical_points = 1 + std::ceil(height / vertical_spacing);
-    nhorizontal_points = 1 + std::ceil(width / horizontal_spacing);
-  } else {
-    // Prompt the user for the number of points in each direction
-    std::cout << "How many points in the horizontal direction? ";
-    std::cin >> nhorizontal_points;
-    std::cout << "How many points in the vertical direction? ";
-    std::cin >> nvertical_points;
-  }
-
-  // Update the size of each horizontal or vertical spacing
-  horizontal_spacing = width / (nhorizontal_points - 1);
-  vertical_spacing = height / (nvertical_points - 1);
-
-  // Initialize the variables with the total number of points
+  // Initialize the variable with the total number of points
   const int npoints = nvertical_points * nhorizontal_points;
 
   // Create a list of all the points
@@ -76,8 +40,11 @@ int main() {
       // Declare an auxiliary point
       std::array<double, 2> aux_point;
 
+      // assign the position to the auxiliary point
       aux_point.at(0) = j * horizontal_spacing;
       aux_point.at(1) = i * vertical_spacing;
+
+      //add the auxiliary point to the list of points
       points.emplace_back(aux_point);
     }
   }
